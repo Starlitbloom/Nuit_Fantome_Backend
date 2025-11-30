@@ -27,20 +27,20 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        return path.contains("/login")
+                || path.contains("/register")
+                || path.contains("/swagger")
+                || path.contains("/api-docs")
+                || path.equals("/error");
+    }
+
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
-        System.out.println("PATH: " + request.getRequestURI() + " METHOD: " + request.getMethod());
-
-        // Permitir rutas públicas sin JWT
-        if (path.startsWith("/api/v1/auth/login") || path.startsWith("/api/v1/users")) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-
 
         final String authHeader = request.getHeader("Authorization");
         String username = null;
@@ -53,9 +53,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
             if (jwtUtil.validateToken(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
@@ -63,6 +65,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         chain.doFilter(request, response);
     }
-    
 }
-

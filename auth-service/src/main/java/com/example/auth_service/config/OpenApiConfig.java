@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI customAPI() {
+    OpenAPI customAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("Nuit Fantome Auth Service API")

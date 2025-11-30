@@ -42,7 +42,7 @@ public class User {
     private Rol role = Rol.CLIENTE; // Por defecto CLIENTE
 
     @Column(nullable = false)
-    private Boolean active = true; // No puede estar vacío
+    private boolean active = true; // No puede estar vacío
 
     @CreationTimestamp
     @Column(updatable = false)

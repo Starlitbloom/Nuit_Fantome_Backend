@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.auth_service.dto.LoginRequest;
 import com.example.auth_service.dto.RegisterRequest;
+import com.example.auth_service.model.Rol;
 import com.example.auth_service.model.User;
 import com.example.auth_service.repository.UserRepository;
 
@@ -21,32 +22,44 @@ public class UserService {
 
     // REGISTRO
     public User register(RegisterRequest request) {
+        if (request == null || request.getEmail() == null || request.getPassword() == null) {
+            throw new IllegalArgumentException("Datos de registro inválidos");
+        }
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El correo ya está registrado");
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("El correo ya está registrado");
         }
 
         User user = new User();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
+        // Asignar rol por defecto y marcar activo
+        user.setRole(Rol.CLIENTE);
+        user.setActive(true);
 
-        return userRepository.save(user);
+        User saved = userRepository.save(user);
+        // No devolver la contraseña
+        saved.setPassword(null);
+        return saved;
     }
 
     // LOGIN
     public User login(LoginRequest request) {
-
-        Optional<User> user = userRepository.findByEmail(request.getEmail());
-
-        if (user.isEmpty()) {
-            throw new RuntimeException("Usuario no encontrado");
+        if (request == null || request.getEmail() == null || request.getPassword() == null) {
+            throw new IllegalArgumentException("Credenciales inválidas");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
-            throw new RuntimeException("Contraseña incorrecta");
+        Optional<User> opt = userRepository.findByEmail(request.getEmail());
+        if (opt.isEmpty()) {
+            throw new IllegalArgumentException("Usuario no encontrado");
         }
 
-        return user.get();
+        User user = opt.get();
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Contraseña incorrecta");
+        }
+
+        return user;
     }
 }
