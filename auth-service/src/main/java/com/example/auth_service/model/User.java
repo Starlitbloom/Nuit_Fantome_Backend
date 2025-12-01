@@ -14,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,10 +32,16 @@ public class User {
 
     @Email(message = "Correo inválido")
     @NotBlank(message = "El email es obligatorio")
+    @Size(max = 100, message = "El correo no puede exceder los 100 caracteres")
+    @Pattern(
+        regexp = "^[A-Za-z0-9._%+-]+@(duoc\\.cl|profesor\\.duoc\\.cl|gmail\\.com)$",
+        message = "Solo se permiten correos @duoc.cl, @profesor.duoc.cl o @gmail.com"
+    )
     @Column(nullable = false, unique = true)
     private String email;
 
     @NotBlank(message = "Contraseña obligatoria")
+    @Size(min = 4, message = "La contraseña debe tener minimo 4 caracteres")
     @Column(nullable = false)
     private String password;
 

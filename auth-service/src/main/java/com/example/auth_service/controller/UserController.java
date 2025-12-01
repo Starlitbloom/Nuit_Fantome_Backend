@@ -13,6 +13,7 @@ import com.example.auth_service.dto.LoginRequest;
 import com.example.auth_service.dto.LoginResponse;
 import com.example.auth_service.dto.RegisterRequest;
 import com.example.auth_service.model.User;
+import com.example.auth_service.repository.UserRepository;
 import com.example.auth_service.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +29,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -84,4 +89,39 @@ public class UserController {
 
     //   RESPONSE
     record AuthResponse(String message, String token) {}
+
+    @GetMapping("/users/email/{email}")
+    public ResponseEntity<?> getUserIdByEmail(@PathVariable String email) {
+
+        User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        return ResponseEntity.ok(
+            Map.of(
+                "id", user.getId(),
+                "email", user.getEmail(),
+                "role", user.getRole()
+            )
+        );
+    }
+
+    @GetMapping("/users/internal/email/{email}")
+    public ResponseEntity<?> getUserIdByEmailInternal(@PathVariable String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        return ResponseEntity.ok(Map.of("id", user.getId()));
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+        return ResponseEntity.ok(Map.of(
+            "id", user.getId(),
+            "email", user.getEmail(),
+            "role", user.getRole(),
+            "password", user.getPassword()
+        ));
+    }
+
 }
