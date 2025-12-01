@@ -9,3 +9,6 @@ public class CatalogServiceApplication {
         SpringApplication.run(CatalogServiceApplication.class, args);
     }
 }
+//Eureka:http://localhost:8761
+//Swagger: http://localhost:8081/swagger-ui/index.html
+//Actuator: http://localhost:8081/actuator/health

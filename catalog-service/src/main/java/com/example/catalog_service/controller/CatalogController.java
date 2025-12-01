@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+// 👇 PREFIJO PARA TODAS LAS RUTAS DEL CATÁLOGO
+@RequestMapping("/api/catalog")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class CatalogController {

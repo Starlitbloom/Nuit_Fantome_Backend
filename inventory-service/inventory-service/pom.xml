@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Spring Boot 3.3.x (estable) -->
+    <!-- Spring Boot 3.3.x -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -18,11 +18,13 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>inventory-service</name>
     <description>Microservicio de inventario de Nuit Fantome</description>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>21</java.version>
-        <!-- Spring Cloud 2023.0.x compatible con Boot 3.3.x -->
+        <!-- Spring Cloud compatible con Boot 3.3.x -->
         <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -97,7 +99,7 @@
     <build>
         <plugins>
 
-            <!-- Lombok / compilación -->
+            <!-- Compilación con Java 21 + Lombok -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
