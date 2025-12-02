@@ -13,8 +13,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
-@CrossOrigin(origins = "*") // para que el frontend React pueda llamar sin problemas
+@RequestMapping("/api/orders")   // 👈 PREFIJO CLARO
+@CrossOrigin(origins = "*")
 public class OrderController {
 
     private final OrderService orderService;
@@ -22,20 +22,20 @@ public class OrderController {
     // ---------- Endpoints CLIENTE ----------
 
     // Checkout del carrito
-    @PostMapping("/orders/checkout")
+    @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> checkout(@RequestBody CheckoutRequest request) {
         CheckoutResponse response = orderService.checkout(request);
         return ResponseEntity.ok(response);
     }
 
     // Ver detalle de un pedido por ID
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Order> getOrder(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    // Ver pedidos por correo (si no tienes auth)
-    @GetMapping("/orders/email/{email}")
+    // Ver pedidos por correo
+    @GetMapping("/email/{email}")
     public ResponseEntity<List<Order>> getOrdersByEmail(@PathVariable String email) {
         return ResponseEntity.ok(orderService.getOrdersByEmail(email));
     }
@@ -43,19 +43,19 @@ public class OrderController {
     // ---------- Endpoints ADMIN ----------
 
     // Lista de todos los pedidos
-    @GetMapping("/admin/orders")
+    @GetMapping("/admin")
     public ResponseEntity<List<Order>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
     // Detalle admin de un pedido
-    @GetMapping("/admin/orders/{id}")
+    @GetMapping("/admin/{id}")
     public ResponseEntity<Order> getAdminOrder(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    // Cambiar estado de un pedido (DESPACHADA, ENTREGADA, etc.)
-    @PutMapping("/admin/orders/{id}/status")
+    // Cambiar estado de un pedido
+    @PutMapping("/admin/{id}/status")
     public ResponseEntity<Order> updateStatus(@PathVariable Long id,
                                               @RequestParam("status") OrderStatus status) {
         return ResponseEntity.ok(orderService.updateStatus(id, status));
