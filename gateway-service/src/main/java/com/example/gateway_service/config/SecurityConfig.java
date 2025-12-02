@@ -1,21 +1,26 @@
 package com.example.gateway_service.config;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
-@Configuration
+@EnableWebFluxSecurity
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-
-        http.authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-            );
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        http
+            .csrf(csrf -> csrf.disable())  // 🔑 Forma correcta en WebFlux
+            .authorizeExchange(exchange -> exchange
+                .pathMatchers("/api/v1/auth/**").permitAll() // permitir register/login
+                .anyExchange().authenticated()
+            )
+            .httpBasic(httpBasic -> httpBasic.disable())
+            .formLogin(form -> form.disable());
 
         return http.build();
     }
 }
+
+
